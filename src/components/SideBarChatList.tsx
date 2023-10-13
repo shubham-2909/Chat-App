@@ -2,16 +2,62 @@
 import { FC } from 'react'
 import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { chatHrefConstructor } from '@/lib/utils'
+import { chatHrefConstructor, toPusherKey } from '@/lib/utils'
+import { pusherClient } from '@/lib/pusher'
+import toast from 'react-hot-toast'
+import UnseenChatToast from './UnseenChatToast'
 interface SideBarChatListProps {
   friends: User[]
   sessionId: string
+}
+interface extendedMessage extends Message {
+  senderImg: string
+  senderName: string
 }
 const SideBarChatList: FC<SideBarChatListProps> = ({ friends, sessionId }) => {
   const router = useRouter()
   const pathName = usePathname()
   const [unseenMessages, setUnseenMessages] = useState<Message[]>([])
+  useEffect(() => {
+    pusherClient.subscribe(toPusherKey(`user:${sessionId}:chats`))
+    pusherClient.subscribe(toPusherKey(`user:${sessionId}:friends`))
+    const newFriendHandler = () => {
+      router.refresh()
+    }
 
+    const chatHandler = (message: extendedMessage) => {
+      const shouldNotify =
+        pathName !==
+        `/dashboard/chat/${chatHrefConstructor(sessionId, message.senderId)}`
+
+      if (!shouldNotify) return
+
+      // notify the message to the user
+      toast.custom((t) => {
+        //component
+        return (
+          <UnseenChatToast
+            t={t}
+            senderId={message.senderId}
+            senderImg={message.senderImg}
+            sessionId={sessionId}
+            senderMessage={message.text}
+            senderName={message.senderName}
+          />
+        )
+      })
+
+      setUnseenMessages((prev) => [...prev, message])
+    }
+    pusherClient.bind('new_message', chatHandler)
+    pusherClient.bind('new_friend', newFriendHandler)
+    return () => {
+      pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:chats`))
+      pusherClient.unsubscribe(toPusherKey(`user:${sessionId}:friends`))
+      pusherClient.unbind('new_message', chatHandler)
+      pusherClient.unbind('new_friend', newFriendHandler)
+    }
+  }, [pathName, sessionId, router])
   useEffect(() => {
     if (pathName?.includes('chat')) {
       setUnseenMessages((prev) => {

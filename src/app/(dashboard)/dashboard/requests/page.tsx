@@ -23,7 +23,7 @@ const page: FC = async () => {
   )
   return (
     <main className='pt-8'>
-      <h1 className='text-5xl mb-8 font-bold'>Add a friend</h1>
+      <h1 className='text-5xl mb-8 font-bold'>Incoming Requests</h1>
       {/* conponent for showing requests and managing them*/}
       <div className='flex flex-col gap-4'>
         <FriendRequests
