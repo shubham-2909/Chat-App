@@ -21,7 +21,9 @@ const Login: FunctionComponent<LoginProps> = () => {
     <div className='flex min-h-full justify-center items-center py-12 px-4 sm:px-6 lg:px-8'>
       <div className='w-full flex flex-col items-center max-w-md space-y-8'>
         <div className='flex flex-col gap-8 items-center'>
-          logo
+          <p className='font-bold text-3xl bg-gradient-to-r from-indigo-400 to-cyan-400 text-transparent bg-clip-text '>
+            NexChat
+          </p>
           <h2 className='mt-6 text-center text-3xl font-bold text-gray-900 tracking-tight'>
             Sign in to your Account
           </h2>

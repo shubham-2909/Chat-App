@@ -43,8 +43,14 @@ const layout: FC<layoutProps> = async ({ children }) => {
   return (
     <div className='w-full h-screen flex'>
       <div className='w-full h-full max-w-xs flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6'>
-        <Link href={`/dashboard`} className='flex h-16 shrink items-center'>
+        <Link
+          href={`/dashboard`}
+          className='flex h-16 shrink items-center gap-2'
+        >
           <Icons.Logo className='w-auto h-8 text-indigo-600' />
+          <p className='font-bold text-3xl bg-gradient-to-r from-indigo-400 to-cyan-400 text-transparent bg-clip-text '>
+            NexChat
+          </p>
         </Link>
         {friends.length > 0 ? (
           <div className='font-semibold text-xs text-gray-400 leading-6'>
