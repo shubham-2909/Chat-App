@@ -38,20 +38,21 @@ const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault()
               sendMessage()
-            }
-            try {
-              if (canPublish) {
-                await axios.post('/api/message/typing', { chatId })
-                setCanPublish(false)
-                setTimeout(function () {
-                  setCanPublish(true)
-                }, 400)
+            } else {
+              try {
+                if (canPublish) {
+                  await axios.post('/api/message/typing', { chatId })
+                  setCanPublish(false)
+                  setTimeout(function () {
+                    setCanPublish(true)
+                  }, 400)
+                }
+              } catch (error) {
+                if (error instanceof AxiosError) {
+                  console.log(error.response?.data)
+                }
+                console.log('Something went wrong')
               }
-            } catch (error) {
-              if (error instanceof AxiosError) {
-                console.log(error.response?.data)
-              }
-              console.log('Something went wrong')
             }
           }}
           rows={1}

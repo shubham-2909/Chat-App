@@ -37,7 +37,7 @@ const Messages: FC<MessagesProps> = ({
 
       setTimeout(() => {
         setTyping(false)
-      }, 2000)
+      }, 1700)
     }
     pusherClient.bind('incoming-message', incomingMessageHandler)
     pusherClient.bind('friend_typing', inComingTypingHandler)
