@@ -3,7 +3,7 @@ import { FC } from 'react'
 import { useState, useRef } from 'react'
 import TextareaAutosize from 'react-textarea-autosize'
 import Button from './ui/Button'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 
 interface ChatInputProps {
@@ -15,6 +15,7 @@ const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null)
   const [input, setinput] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [canPublish, setCanPublish] = useState<boolean>(true)
   const sendMessage = async () => {
     if (!input) return
     setIsLoading(true)
@@ -33,10 +34,24 @@ const ChatInput: FC<ChatInputProps> = ({ chatPartner, chatId }) => {
       <div className='relative flex-1 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600'>
         <TextareaAutosize
           ref={textAreaRef}
-          onKeyDown={(e) => {
+          onKeyDown={async (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
               e.preventDefault()
               sendMessage()
+            }
+            try {
+              if (canPublish) {
+                await axios.post('/api/message/typing', { chatId })
+                setCanPublish(false)
+                setTimeout(function () {
+                  setCanPublish(true)
+                }, 400)
+              }
+            } catch (error) {
+              if (error instanceof AxiosError) {
+                console.log(error.response?.data)
+              }
+              console.log('Something went wrong')
             }
           }}
           rows={1}
