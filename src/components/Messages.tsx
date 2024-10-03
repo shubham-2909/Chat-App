@@ -24,7 +24,6 @@ const Messages: FC<MessagesProps> = ({
   const friendId = sessionId === userId1 ? userId2 : userId1
   const [messages, setMessages] = useState<Message[]>(initialMessages)
   const [typing, setTyping] = useState<boolean>(false)
-  console.log(typing)
 
   useEffect(() => {
     pusherClient.subscribe(toPusherKey(`chat:${chatId}`))
